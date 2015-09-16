@@ -15,7 +15,7 @@ public class Enemy {
     private float x, y, speed;
     private Texture texture;
     private Tile startTile;
-    private boolean first = true;
+    private boolean first = true, alive = true;
     private TileGrid grid;
 
     private ArrayList<Checkpoint> checkpoints;
@@ -54,7 +54,7 @@ public class Enemy {
             {
                 if( currentCheckpoint + 1 == checkpoints.size() )
                 {
-                    System.out.println("Enemy Reached End of Maze");
+                    Die();
                 }
                 else
                 {
@@ -122,7 +122,10 @@ public class Enemy {
 
         while( !found )
         {
-            if( s.getType() != grid.GetTile(s.getXPlace() + dir[0] * counter, s.getYPlace() + dir[1] * counter).getType() )
+            if( s.getXPlace() + dir[0] * counter == grid.getTilesWide() ||
+                    s.getYPlace() + dir[1] * counter == grid.getTilesHigh() ||
+                    s.getType() != grid.GetTile(s.getXPlace() + dir[0] * counter,
+                    s.getYPlace() + dir[1] * counter).getType() )
             {
                 found = true;
                 //Move counter back 1 to find tile before new tileType
@@ -158,7 +161,7 @@ public class Enemy {
         else if( s.getType() == d.getType() && directions[1] != -1 )
         {
             dir[0] = 0;
-            dir[1] = -1;
+            dir[1] = 1;
         }
         else if( s.getType() == l.getType() && directions[0] != 1 )
         {
@@ -169,28 +172,15 @@ public class Enemy {
         {
             dir[0] = 2;
             dir[1] = 2;
-            System.out.println("NO DIRECTION FOUND");
         }
 
         return dir;
     }
 
-    /*
-    private boolean pathContinues()
+    private void Die()
     {
-        boolean answer = true;
-
-        Tile myTile = grid.GetTile((int) (x / 64), (int) (y / 64));
-        Tile nextTile = grid.GetTile((int) (x / 64) + 1, (int) (y / 64));
-
-        if( myTile.getType() != nextTile.getType() )
-        {
-            answer = false;
-        }
-
-        return answer;
+        alive = false;
     }
-    */
 
     public void Draw(){
         DrawQuadTex(texture, x, y, width, height);
@@ -266,6 +256,11 @@ public class Enemy {
 
     public void setFirst(boolean first) {
         this.first = first;
+    }
+
+    public boolean isAlive()
+    {
+        return alive;
     }
 
     public TileGrid getTileGrid()

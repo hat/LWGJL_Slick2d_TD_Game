@@ -8,7 +8,7 @@ import org.lwjgl.Sys;
 public class Clock {
 
     private static boolean paused = false;
-    public static long lastFrame, totalTime;
+    public static long lastFrame = getTime(), totalTime;
     public static float d = 0, multiplier = 1;
 
     public static long getTime()
@@ -18,15 +18,13 @@ public class Clock {
 
     public static float getDelta()
     {
-        int delta = 0;
-
         long currentTime = getTime();
-        if( lastFrame != 0 )
-        {
-            delta = (int)(currentTime - lastFrame);
-        }
+        int delta = (int)(currentTime - lastFrame);
         lastFrame = getTime();
-
+        if( delta * 0.01f > 0.5f )
+        {
+            return 0.5f;
+        }
         return delta * 0.01f;
     }
 
